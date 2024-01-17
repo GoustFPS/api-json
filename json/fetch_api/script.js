@@ -28,6 +28,7 @@ usuario.innerHTML = `
 usuario.classList.add('usuario')
 // Adicionando no DOM
 usuariosContainer.appendChild(usuario)
+// Limpar o campo
 helperTextUsuario.innerText= ``
 console.log(data)
 })
@@ -43,7 +44,52 @@ btnUsuario.addEventListener('click', gerarUsuario)
 
 // -------- Gerador de postagens -------- //
 // 1. Captura de elementos
+const postTitle = document.getElementById('post-title')
+const postBody = document.getElementById('post-body')
+const btnPost = document.getElementById('btn-post')
+const postContainer = document.getElementById('posts-container')
+const helperTextPost = document.getElementById('helper-text-post')
 
 // 2. Funções
+function gerarPost(e){
+    helperTextPost.innerText = ''
+    e.preventDefault()
+
+    const jsonBody = JSON.stringify({
+        titulo: postTitle.value,
+        mensagem: postBody.value
+    })
+
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body: jsonBody
+    })
+
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+
+        const post = document.createElement('div')
+        post.classList.add('postagem')
+    post.innerHTML = `
+        <h3>${data.id} - ${data.titulo}</h3>
+        <p>${data.mensagem}</p>
+    `
+    postContainer.appendChild(post)
+
+        // Limpar o formulário
+        postTitle.value = ''
+        postBody.value = ''
+        alert('Postagem criada com sucesso!')
+    })
+    .catch((error) => {
+        console.log(error)
+        helperTextPost.innerText = 'Não foi possível gerar a postagem'
+    })
+}
 
 // 3. Eventos
+    btnPost.addEventListener('click', (e) => gerarPost(e))
